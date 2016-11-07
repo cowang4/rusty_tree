@@ -1,5 +1,5 @@
 [package]
 
-name = "rust_tree"
+name = "rusty_tree"
 version = "0.0.1"
 authors = [ "Greg Cowan <cowang4@yahoo.com>" ]
