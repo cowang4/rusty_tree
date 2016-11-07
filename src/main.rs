@@ -17,18 +17,18 @@ fn print_dir(dir: &Path, dist: usize) -> (i32, i32) {
         let file_name = path.as_path().file_name().unwrap().to_str().unwrap(); //PathBuf -> Path -> OsStr -> &str
         if file_name.starts_with(".") { continue; } //ignore hidden files
         let gap = std::iter::repeat(" ").take(dist*3).collect::<String>();
-        let mut vert;
-        if size > 0 && i != size-1 { vert = "|"; }
-        else { vert = "`"; }
+        let vert;
+        if size > 0 && i != size-1 { vert = "\u{251c}"; }
+        else { vert = "\u{2514}"; }
         if path.is_dir() {
-            println!("{}{}---{}", gap, vert, Blue.bold().paint(file_name));
+            println!("{}{}\u{2500}\u{2500}\u{2500}{}", gap, vert, Blue.bold().paint(file_name));
             dir_count+=1;
             let (rec_dir, rec_file) = print_dir(&path, dist+1);
             dir_count += rec_dir;
             file_count += rec_file;
         }
         else {
-            println!("{}{}---{}", gap, vert, file_name);
+            println!("{}{}\u{2500}\u{2500}\u{2500}{}", gap, vert, file_name);
             file_count+=1;
         }
     }
@@ -37,7 +37,7 @@ fn print_dir(dir: &Path, dist: usize) -> (i32, i32) {
 
 fn main() {
     let pwd = current_dir().unwrap();
-    println!("."); //print pwd as .
+    println!("{}", Blue.bold().paint(".")); //print pwd as .
     let (dir_count, file_count) = print_dir(&pwd.as_path(), 0);
     println!("\n{} directories, {} files", dir_count, file_count);
 }
