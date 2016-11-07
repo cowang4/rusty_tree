@@ -3,3 +3,6 @@
 name = "rusty_tree"
 version = "0.0.1"
 authors = [ "Greg Cowan <cowang4@yahoo.com>" ]
+
+[dependencies]
+ansi_term = "0.9.0"
