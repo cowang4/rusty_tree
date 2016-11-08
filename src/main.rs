@@ -45,7 +45,7 @@ fn tree_dir(dir: &Path, dist: usize, verts: &Vec<bool>, depth_limit: usize) -> (
             let mut child_chr = "\u{2500}"; // horizontal
             if dist != depth_limit-1 && read_dir(&path).unwrap().nth(0).is_some() { child_chr = "\u{252c}" } // horiz tee down
             //print
-            println!("{}{}\u{2500}{}{}", prefix, vert, child_chr, Blue.bold().paint(file_name));
+            println!("{}{}\u{2500}{} {}", prefix, vert, child_chr, Blue.bold().paint(file_name));
             dir_count+=1;
             //setup next continuation lines
             let mut new_verts = verts.clone();
@@ -57,7 +57,7 @@ fn tree_dir(dir: &Path, dist: usize, verts: &Vec<bool>, depth_limit: usize) -> (
             file_count += rec_file;
         }
         else { // path.is_file()
-            println!("{}{}\u{2500}\u{2500}{}", prefix, vert, file_name);
+            println!("{}{}\u{2500}\u{2500} {}", prefix, vert, file_name);
             file_count+=1;
         }
     }
