@@ -19,8 +19,8 @@ fn sort_fn(a: &PathBuf, b: &PathBuf) -> Ordering {
 fn build_prefix(verts: &Vec<bool>) -> String {
     let mut result: String = String::new();
     for entry in verts {
-        if *entry == true { result.push_str("\u{2502}  "); } // vert space space
-        else { result.push_str("    "); } // space space space
+        if *entry == true { result.push_str("\u{2502}\u{2000}\u{2000}"); } // vert space space
+        else { result.push_str("\u{2000}\u{2000}\u{2000}\u{2000}"); } // space space space space
     }
     result
 }
