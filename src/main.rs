@@ -6,6 +6,7 @@ use std::fs::read_dir;
 use std::path:: { Path, PathBuf };
 use ansi_term::Colour::*;
 use std::cmp::Ordering;
+use std::os::unix::fs::PermissionsExt;
 
 
 //sorts PathBufs lexicgraphically by filename
@@ -19,10 +20,21 @@ fn sort_fn(a: &PathBuf, b: &PathBuf) -> Ordering {
 fn build_prefix(verts: &Vec<bool>) -> String {
     let mut result: String = String::new();
     for entry in verts {
-        if *entry == true { result.push_str("\u{2502}\u{2000}\u{2000}"); } // vert space space
-        else { result.push_str("\u{2000}\u{2000}\u{2000}\u{2000}"); } // space space space space
+        if *entry == true { result.push_str("\u{2502}   "); } // vert space space space
+        else { result.push_str("    "); } // space space space space
     }
     result
+}
+
+fn colorize(path: &PathBuf) -> ansi_term::ANSIGenericString<str> {
+    let file_name = path.as_path().file_name().unwrap().to_str().unwrap(); //PathBuf -> Path -> OsStr -> &str
+    let metadata = path.metadata().unwrap();
+    let permissions = metadata.permissions();
+    if permissions.mode() % 0o2 == 0o1 { // other executable
+        return Green.bold().paint(file_name)
+    }
+    use ansi_term::Style;
+    Style::new().paint(file_name)
 }
 
 //recursive tree print
@@ -41,11 +53,11 @@ fn tree_dir(dir: &Path, dist: usize, verts: &Vec<bool>, depth_limit: usize) -> (
         let mut vert = "\u{2514}"; // right angle up/right
         if size > 0 && i != size-1 { vert = "\u{251c}"; } // vertical tee right
         if path.is_dir() {
-            //determine whether or not to make a children branch
-            let mut child_chr = "\u{2500}"; // horizontal
-            if dist != depth_limit-1 && read_dir(&path).unwrap().nth(0).is_some() { child_chr = "\u{252c}" } // horiz tee down
+            //determine whether or not to make a child branch
+            //let mut child_chr = "\u{2500}"; // dash
+            //if dist != depth_limit-1 && read_dir(&path).unwrap().nth(0).is_some() { child_chr = "\u{252c}" } // horiz tee down
             //print
-            println!("{}{}\u{2500}{} {}", prefix, vert, child_chr, Blue.bold().paint(file_name));
+            println!("{}{}\u{2500}\u{2500} {}", prefix, vert, Blue.bold().paint(file_name));
             dir_count+=1;
             //setup next continuation lines
             let mut new_verts = verts.clone();
@@ -57,7 +69,9 @@ fn tree_dir(dir: &Path, dist: usize, verts: &Vec<bool>, depth_limit: usize) -> (
             file_count += rec_file;
         }
         else { // path.is_file()
-            println!("{}{}\u{2500}\u{2500} {}", prefix, vert, file_name);
+            //colorize
+            let colored = colorize(path);
+            println!("{}{}\u{2500}\u{2500} {}", prefix, vert, colored); //dash dash
             file_count+=1;
         }
     }
