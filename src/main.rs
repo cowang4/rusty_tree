@@ -3,7 +3,7 @@ extern crate ansi_term;
 
 use std::env::current_dir;
 use std::fs::read_dir;
-use std::path:: { Path, PathBuf };
+use std::path::{ Path, PathBuf };
 use ansi_term::Colour::*;
 use std::cmp::Ordering;
 use std::os::unix::fs::PermissionsExt;
