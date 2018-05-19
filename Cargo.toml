@@ -1,8 +1,10 @@
 [package]
-
 name = "rusty_tree"
-version = "0.0.1"
+version = "0.1.0"
 authors = [ "Greg Cowan <cowang4@yahoo.com>" ]
 
 [dependencies]
 ansi_term = "0.9.0"
+docopt = "1"
+serde = "1.0"
+serde_derive = "1.0"
