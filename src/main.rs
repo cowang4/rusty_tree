@@ -1,14 +1,13 @@
-extern crate ansi_term;
-extern crate docopt;
-#[macro_use]
-extern crate serde_derive;
 
-use ansi_term::Colour::*;
-use docopt::Docopt;
 use std::cmp::Ordering;
 use std::fs::read_dir;
-use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
+
+use ansi_term::{self};
+use docopt::{self, Docopt};
+use lscolors::{LsColors, Style};
+use serde_derive::{Deserialize};
+
 
 //sorts PathBufs lexicgraphically by filename
 fn pathbuf_sort_fn(a: &PathBuf, b: &PathBuf) -> Ordering {
@@ -31,15 +30,11 @@ fn build_prefix(verts: &Vec<bool>) -> String {
 }
 
 fn colorize(path: &PathBuf) -> ansi_term::ANSIGenericString<str> {
-    let file_name = path.as_path().file_name().unwrap().to_str().unwrap(); //PathBuf -> Path -> OsStr -> &str
-    let metadata = path.metadata().unwrap();
-    let permissions = metadata.permissions();
-    if permissions.mode() % 0o2 == 0o1 {
-        // other executable
-        return Green.bold().paint(file_name);
-    }
-    use ansi_term::Style;
-    Style::new().paint(file_name)
+    let lscolors = LsColors::from_env().unwrap_or_default();
+    let file_name = path.as_path().file_name().unwrap_or(path.as_os_str()).to_str().unwrap(); //PathBuf -> Path -> OsStr -> &str
+    let style = lscolors.style_for_path(path);
+    let ansi_style = style.map(Style::to_ansi_term_style).unwrap_or_default();
+    ansi_style.paint(file_name)
 }
 
 fn get_paths(dir: &Path) -> Vec<PathBuf> {
@@ -87,7 +82,7 @@ fn tree_dir(dir: &Path, dist: usize, verts: &mut Vec<bool>, depth_limit: usize) 
                 "{}{}\u{2500}\u{2500} {}",
                 prefix,
                 vert,
-                Blue.bold().paint(file_name)
+                colorize(path)
             );
 
             //setup next continuation lines
@@ -162,7 +157,7 @@ fn main() {
     let mut total_file_count = 0;
 
     for dir in dirs.iter() {
-        println!("{}", Blue.bold().paint(dir.to_str().expect("utf-8 path")));
+        println!("{}", colorize(dir));
         let (dir_count, file_count) = print_tree(dir, depth);
         total_dir_count += dir_count;
         total_file_count += file_count;
