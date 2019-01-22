@@ -5,8 +5,16 @@ use std::path::{Path, PathBuf};
 
 use ansi_term::{self};
 use docopt::{self, Docopt};
+use lazy_static::lazy_static;
 use lscolors::{LsColors, Style};
 use serde_derive::{Deserialize};
+
+
+lazy_static!{
+    static ref LSCOLORS: LsColors = {
+        LsColors::from_env().unwrap_or_default()
+    };
+}
 
 
 //sorts PathBufs lexicgraphically by filename
@@ -30,9 +38,8 @@ fn build_prefix(verts: &Vec<bool>) -> String {
 }
 
 fn colorize(path: &PathBuf) -> ansi_term::ANSIGenericString<str> {
-    let lscolors = LsColors::from_env().unwrap_or_default();
     let file_name = path.as_path().file_name().unwrap_or(path.as_os_str()).to_str().unwrap(); //PathBuf -> Path -> OsStr -> &str
-    let style = lscolors.style_for_path(path);
+    let style = LSCOLORS.style_for_path(path);
     let ansi_style = style.map(Style::to_ansi_term_style).unwrap_or_default();
     ansi_style.paint(file_name)
 }
