@@ -31,9 +31,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "lscolors"
-version = "0.11.0"
+version = "0.11.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a24e014efe73b727e5792b6f422a23c04b10ba9d8cdc74b197a25a08db7eac86"
+checksum = "2b3501e949531fefe2d23b2d5fb9bbb0f450e528bbfcdcd78ad04f28c3dea550"
 dependencies = [
  "ansi_term",
 ]
