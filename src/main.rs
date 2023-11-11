@@ -3,10 +3,10 @@ use std::cmp::Ordering;
 use std::fs::read_dir;
 use std::path::{Path, PathBuf};
 
-use ansi_term::{self};
 use docopt::{self, Docopt};
 use lazy_static::lazy_static;
 use lscolors::{LsColors, Style};
+use nu_ansi_term::AnsiGenericString;
 use serde_derive::{Deserialize};
 
 
@@ -37,10 +37,10 @@ fn build_prefix(verts: &Vec<bool>) -> String {
     result
 }
 
-fn colorize(path: &PathBuf) -> ansi_term::ANSIGenericString<str> {
+fn colorize(path: &PathBuf) -> AnsiGenericString<str> {
     let file_name = path.as_path().file_name().unwrap_or(path.as_os_str()).to_str().unwrap(); //PathBuf -> Path -> OsStr -> &str
     let style = LSCOLORS.style_for_path(path);
-    let ansi_style = style.map(Style::to_ansi_term_style).unwrap_or_default();
+    let ansi_style = style.map(Style::to_nu_ansi_term_style).unwrap_or_default();
     ansi_style.paint(file_name)
 }
 
